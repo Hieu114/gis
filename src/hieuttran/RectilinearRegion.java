@@ -60,7 +60,7 @@ public final class RectilinearRegion {
 		throw new IllegalArgumentException();
 	}
 
-	public boolean areConnected(Rectangle rec1, Rectangle rec2){
+	private boolean areConnected(Rectangle rec1, Rectangle rec2){
 		return rec1.validate().left().compareTo(rec2.validate().right()) == 0 || //left side of the first rectangle touch the right side of the second rectangle
 				rec1.right().compareTo(rec2.left()) == 0 || //right side of the first rectangle touch the left side of the second rectangle
 				rec1.top().compareTo(rec2.bottom()) == 0 || //top side of the first rectangle touch the bottom side of the second rectangle
