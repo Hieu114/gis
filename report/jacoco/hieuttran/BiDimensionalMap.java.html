@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BiDimensionalMap.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">auction</a> &gt; <a href="index.source.html" class="el_package">hieuttran</a> &gt; <span class="el_source">BiDimensionalMap.java</span></div><h1>BiDimensionalMap.java</h1><pre class="source lang-java linenums">package hieuttran;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
+public final class BiDimensionalMap&lt;T&gt; {
+<span class="pc" id="L8">	private final SortedMap&lt;BigDecimal, SortedMap&lt;BigDecimal, Collection&lt;T&gt;&gt;&gt; points = new TreeMap&lt;&gt;();</span>
+	
+<span class="fc" id="L10">	BiDimensionalMap(){}</span>
+	
+<span class="nc" id="L12">	BiDimensionalMap(Collection&lt;BigDecimal&gt; xCoord,  Collection&lt;BigDecimal&gt; yCoord){</span>
+<span class="nc bnc" id="L13" title="All 2 branches missed.">		for (BigDecimal x : xCoord) {</span>
+<span class="nc bnc" id="L14" title="All 2 branches missed.">			for (BigDecimal y : yCoord) {</span>
+<span class="nc" id="L15">				getUpdater().setX(x).setY(y).add();</span>
+<span class="nc" id="L16">			}</span>
+<span class="nc" id="L17">		}</span>
+<span class="nc" id="L18">	}</span>
+	
+	public final void addEverywhere(T value) {
+<span class="nc" id="L21">		Collection&lt;T&gt; c = new HashSet&lt;&gt;();</span>
+<span class="nc" id="L22">		c.add(value);</span>
+<span class="nc bnc" id="L23" title="All 2 branches missed.">		for (Coordinate coordinate : coordinateSet()) {</span>
+<span class="nc" id="L24">			getUpdater().setX(coordinate.x()).setY(coordinate.y()).setValues(c).add();</span>
+<span class="nc" id="L25">		}</span>
+<span class="nc" id="L26">	}</span>
+	
+	public final Collection&lt;T&gt; get(BigDecimal x, BigDecimal y){
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">		if (points.get(x) == null) {</span>
+<span class="nc" id="L30">			return null;</span>
+		}
+<span class="fc" id="L32">		return points.get(x).get(y);</span>
+	}
+	
+	public final Collection&lt;T&gt; get(Coordinate coordinate){
+<span class="nc" id="L36">		return get(coordinate.x(), coordinate.y());</span>
+	}
+	
+	public   final   Updater getUpdater() {
+<span class="fc" id="L40">		return new Updater();</span>
+	}
+	
+<span class="fc" id="L43">	public final class Updater {</span>
+<span class="fc" id="L44">		private BigDecimal x = new BigDecimal(0);</span>
+<span class="fc" id="L45">		private BigDecimal y = new BigDecimal(0);</span>
+<span class="fc" id="L46">		private Supplier&lt;Collection&lt;T&gt;&gt; collectionFactory = HashSet&lt;T&gt;::new;</span>
+<span class="fc" id="L47">		private Collection&lt;T&gt;  values = collectionFactory.get();</span>
+		
+		public final Updater setX(BigDecimal b) {
+<span class="fc" id="L50">			x = b;</span>
+<span class="fc" id="L51">			return this;</span>
+		}
+		public final Updater setY(BigDecimal b) {
+<span class="fc" id="L54">			y = b;</span>
+<span class="fc" id="L55">			return this;</span>
+		}
+		public final Updater setCollectionFactory(Supplier&lt;Collection&lt;T&gt;&gt; c) {
+<span class="nc" id="L58">			collectionFactory = c;</span>
+<span class="nc" id="L59">			return this;</span>
+		}
+		public final Updater setValues(Collection&lt;T&gt; c) {
+<span class="fc" id="L62">			values = c;</span>
+<span class="fc" id="L63">			return this;</span>
+		}
+		
+		public  final  Updater setCoordinate(Coordinate coordinate) {
+<span class="nc" id="L67">			x = coordinate.x();</span>
+<span class="nc" id="L68">			y = coordinate.y();</span>
+<span class="nc" id="L69">			return this;</span>
+		}
+		public final Updater addValue(T value) {
+<span class="nc" id="L72">			values.add(value);</span>
+<span class="nc" id="L73">			return this;</span>
+		}
+		
+		public  final  Collection&lt;T&gt; set(){
+<span class="fc" id="L77">			return points.computeIfAbsent(x, t -&gt; new TreeMap&lt;BigDecimal, Collection&lt;T&gt;&gt;()).put(y, values);</span>
+		}
+		
+		public final boolean add() {
+<span class="nc" id="L81">			return points.computeIfAbsent(x, t -&gt; new TreeMap&lt;BigDecimal, Collection&lt;T&gt;&gt;()).computeIfAbsent(y, t -&gt; collectionFactory.get()).addAll(values);</span>
+		}	
+	}
+	
+	public final Set&lt;BigDecimal&gt; xSet() {
+<span class="fc" id="L86">		return points.keySet();</span>
+	}
+	
+	public final Set&lt;BigDecimal&gt; ySet(BigDecimal x){
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">		if (!points.containsKey(x))</span>
+<span class="nc" id="L91">			return null;</span>
+<span class="fc" id="L92">		return points.get(x).keySet();</span>
+	}
+	
+	public final List&lt;Coordinate&gt; coordinateSet(){
+<span class="fc" id="L96">		List&lt;Coordinate&gt; coordinates = new ArrayList&lt;Coordinate&gt;();</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">		for (BigDecimal x : xSet()) {</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">			for (BigDecimal y : ySet(x)) {</span>
+<span class="fc" id="L99">				coordinates.add(new Coordinate(x,y));</span>
+<span class="fc" id="L100">			}</span>
+<span class="fc" id="L101">		}</span>
+<span class="fc" id="L102">		return coordinates;</span>
+	}
+	public final List&lt;Collection&lt;T&gt;&gt; collectionList(){
+<span class="fc" id="L105">		List&lt;Collection&lt;T&gt;&gt; entries = new ArrayList&lt;Collection&lt;T&gt;&gt;();</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">		for (BigDecimal x : xSet()) {</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">			for (Collection&lt;T&gt; t : points.get(x).values()) {</span>
+<span class="fc" id="L108">				entries.add(t);</span>
+<span class="fc" id="L109">			}</span>
+<span class="fc" id="L110">		}</span>
+<span class="fc" id="L111">		return entries;</span>
+	}
+	public final long collectionSize() {
+<span class="nc" id="L114">		return collectionSize(a -&gt; true);</span>
+	}
+	public final long collectionSize(Predicate&lt;? super T&gt; filter) {
+<span class="fc" id="L117">		int count = 0;</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">		for (Collection&lt;T&gt; c : collectionList()) {</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">			for (T t : c) {</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">				if (filter.test(t))</span>
+<span class="fc" id="L121">					count++;</span>
+<span class="fc" id="L122">			}</span>
+<span class="fc" id="L123">		}</span>
+<span class="fc" id="L124">		return count;</span>
+	}
+	
+	public String toString() {
+<span class="nc" id="L128">		return &quot;Map with &quot; + collectionSize() + &quot; entries and &quot; + coordinateSet().size()+&quot; coordinates&quot;;</span>
+	}
+	
+	public final BiDimensionalMap&lt;T&gt; slice(Rectangle rectangle) {
+<span class="fc" id="L132">		BiDimensionalMap&lt;T&gt; ans = new BiDimensionalMap&lt;&gt;();</span>
+<span class="fc" id="L133">		ans.points.putAll(points.subMap(rectangle.left(), rectangle.right()));</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">		for (BigDecimal x : ans.points.keySet()) {</span>
+<span class="fc" id="L135">			ans.points.put(x, ans.points.get(x).subMap(rectangle.bottom(), rectangle.top()));</span>
+<span class="fc" id="L136">		}</span>
+<span class="fc" id="L137">		return ans;</span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
