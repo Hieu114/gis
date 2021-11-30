@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 public class RectilinearRegionTest {
     @Test
     public void testAreConnected(){
-        RectilinearRegion region =
+        RectilinearRegion region1 =
         RectilinearRegion.of(Set.of(new Rectangle(new Coordinate(new BigDecimal(2), new BigDecimal(2)),
                                                   new Coordinate(new BigDecimal(3), new BigDecimal(4))),
                                     new Rectangle(new Coordinate(new BigDecimal(3), new BigDecimal(2)),
@@ -19,7 +19,7 @@ public class RectilinearRegionTest {
                         new Coordinate(new BigDecimal(3), new BigDecimal(5))),
                 new Rectangle(new Coordinate(new BigDecimal(4), new BigDecimal(1)),
                         new Coordinate(new BigDecimal(6), new BigDecimal(2)))));
-        assertEquals(true, region.isConnected());
+        assertEquals(true, region1.isConnected());
         RectilinearRegion region2 = RectilinearRegion.of(new HashSet<>());
         assertEquals(true, region2.isConnected());
         RectilinearRegion region3 =

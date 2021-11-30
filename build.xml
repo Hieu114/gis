@@ -21,7 +21,7 @@ $ANT_HOME/lib must contain (see Ant-JUnit and JaCoCo installation guides):
 -->
 
 <!-- TODO: change the name to the name of the project given in the assignment (such as "count") -->
-<project name="auction" xmlns:jacoco="antlib:org.jacoco.ant">
+<project name="gis" xmlns:jacoco="antlib:org.jacoco.ant">
   <!--   Directory with source files -->
   <property name="src.dir" value="src"/>
 
@@ -64,6 +64,7 @@ $ANT_HOME/lib must contain (see Ant-JUnit and JaCoCo installation guides):
     <mkdir dir="${build.dir}"/>
     <javac srcdir="${src.dir}" destdir="${build.dir}" debug="true" includeAntRuntime="yes"/>
   </target>
+
 
   <!--   ant run : define run target ONLY IF your project has a main -->
   <!--
@@ -126,6 +127,7 @@ $ANT_HOME/lib must contain (see Ant-JUnit and JaCoCo installation guides):
     <mkdir dir="${doc.dir}"/>
     <javadoc destdir="${doc.dir}" package="yes">
       <fileset dir="${src.dir}" defaultexcludes="yes">
+        <filename name="**/*.java"/>
 	<exclude name="**/*Test.java"/>
       </fileset>
     </javadoc>
